@@ -1,0 +1,43 @@
+ls -l
+Lists all the contents in a folder
+
+ls -l /dev | head
+Lists all the files in RAM
+Above command gives the device listing
+If a device listing starts with c followed by 9 digits
+then it refers to a character device with 9 digits representing the read-write access
+
+After executing the above command the entries contain two numbers separated by comma
+eg. 10, 235 -> where the first number is the major number and the second is the minor number
+
+Linux associates /dev entry with the driver using the major number
+Alternatively, the major number represents a unique way of identifying a driver associated with a particular device
+
+Minor number corresponds to the number of instances of the device.
+
+
+ls -l /dev | grep sda
+Hard-drive Device listing
+We notice that there is a single major number for all the entries which states
+that there is a single block device driver (observe the letter 'b' at the start) responsible for all the partitions of the disk
+
+>> Create a file simple_char_drv.c to contain the driver code [Already done]
+>> Open /lib/modules/$(uname -r)/build/include/linux/fs.h
+>> Search for struct file_operations
+>> Copy the necessary four lines from struct and edit it. [Already Done]
+>> Create the Makefile. [Already Done]
+>> Build the module via this command:
+   make -C /lib/modules/$(uname -r)/build M=$PWD modules
+>> To load the driver:
+   sudo insmod ./chardrv_simple_char_drv.ko
+   To check the driver is loaded or not:
+   ls grep | char
+>> To confirm our driver is loaded for major number 240:
+   cat /proc/devices
+>> Make a sudo character device:
+   sudo mknod -m 666 /dev/simple_char_device c 240 0
+>> The 666 field in the above code gives all users read-write access.
+>> sudo tail -f /var/log/syslog
+   Invokes the chardrv_simple_module_init function
+>> Open a new terminal and enter the following two commands:
+   cat /dev/simple_char_device
